@@ -1,32 +1,30 @@
-import java.sql.*;
+
+import java.util.Scanner;
+import java.math.BigInteger;
+
 public class Voter {
-	private static Connection connect;
-	private static Statement statement;
-	private static ResultSet resultSet;
-
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		Scanner getInput = new Scanner(System.in);
+		// TODO Ask user about username and password.
+		System.out.println("Enter your Username: ");
+		String userName = getInput.nextLine();
+		System.out.println("Enter the password: ");
+		String userPassword = getInput.nextLine();
+		GenerateSHA sha256 = new GenerateSHA(userPassword);
+		System.out.println(sha256.getSHAHash());
 		
-		try {
-			 //Class.forName("com.mysql.jdbc.Driver");
-	         // Setup the connection with the DB
-	         connect = DriverManager
-	                 .getConnection("jdbc:mysql://localhost/online_voting?"
-	                         + "user=admin&password=admin");
-
-	         // Statements allow to issue SQL queries to the database
-	         statement = connect.createStatement();
-	         // Result set get the result of the SQL query
-	         resultSet = statement
-	                 .executeQuery("select * from online_voting.users");
-	         while(resultSet.next()) {
-	        	 System.out.println("we came here");
-	        	System.out.println(resultSet.getString("last_name")); 
-	        	 
-	         }
-		} catch(Exception e) {
-			System.err.println(e);
-		}
+		// TODO Match the username and password with the databases.
+		
+		PublicCloud publicCloud = new PublicCloud(userName,sha256.getSHAHash());
+		// TODO it matches then give the voter public key Kpub and the candidate id's
+		// TODO Let the voter chose among the Among the candidate using their id
+		// TODO Encrypt the candidate ID
+		// TODO Sent the encrypted ID to the public cloud
+		// TODO Mark voter as voted.
+		// TODO close the connection.
+		
+		
+		getInput.close();
 
 	}
 

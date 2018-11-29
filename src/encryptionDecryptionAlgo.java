@@ -19,7 +19,7 @@ public class encryptionDecryptionAlgo {
 		return SAM(new BigInteger(candidateId),kpub,n).toString();
 	}
 	
-	public String RSAdecrypt(String message,BigInteger kpr, BigInteger n){
-    	return new String(SAM(new BigInteger(message),kpr,n).toByteArray());
+	public BigInteger RSAdecrypt(String message,BigInteger kpr, BigInteger n){
+    	return SAM(new BigInteger(message),kpr,n);
     }
 }

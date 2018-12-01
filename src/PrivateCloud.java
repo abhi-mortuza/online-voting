@@ -77,7 +77,7 @@ public class PrivateCloud {
 	}
 	
 	private void DisplayResults() {
-		voteAlteredOrNot();
+		//voteAlteredOrNot();
 		System.out.println("==================================================");
 		System.out.println("============ Displaying final Vote ===============");
 		System.out.println("==================================================");

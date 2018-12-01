@@ -131,7 +131,7 @@ public class PublicCloud {
 			//PreparedStatement updateEXP = connect.prepareStatement("UPDATE `online_voting`.`parameter` SET `parameter_value` = '"+currentEncryptedTotalVoteValue+"' WHERE `parameter`.`parameter_name` = 'vote_condition';");
 			//int updateEXP_done = updateEXP.executeUpdate();
 			//TODO: update the current voting scenario in voting_table
-			PreparedStatement updateVotingTable = connect.prepareStatement("INSERT INTO `online_voting`.`voting_table` (`encrypted_vote`,`hashed_user`,`total_encrypted_vote`) VALUES ('"+ currentEncryptedTotalVoteValue +"','"+encryptionDecryptionAlgo.GenerateSHA(this.userName)+"','"+currentEncryptedTotalVoteValue+"')");
+			PreparedStatement updateVotingTable = connect.prepareStatement("INSERT INTO `online_voting`.`voting_table` (`hashed_user`,`total_encrypted_vote`) VALUES ('"+encryptionDecryptionAlgo.GenerateSHA(this.userName)+"','"+currentEncryptedTotalVoteValue+"')");
 			int insertingVoteInVotingTable = updateVotingTable.executeUpdate();
 			
 		}catch(SQLException e) {
@@ -142,7 +142,6 @@ public class PublicCloud {
 	public boolean wasMyVoteCounted(String userName,String encryptedCandidateId) {
 		boolean voteCounted = false;
 		String currentVote = null;
-		String currentIndividualVote = null;
 		BigInteger prevVote = null;
 		int currentRowID = 0;
 		int PreRowId = 0;
@@ -152,21 +151,15 @@ public class PublicCloud {
 				//Get this table id
 				currentRowID = userVoted.getInt("ID");
 				currentVote = userVoted.getString("total_encrypted_vote");
-				currentIndividualVote = userVoted.getString("encrypted_vote");
 				PreRowId = currentRowID - 1;
-				System.out.println(currentIndividualVote);
-				System.out.println(encryptedCandidateId);
-				if(currentIndividualVote.equals(encryptedCandidateId)) {
-					System.out.println("Your vote was counted now checking if it was modified or not.");
-				}else {
-					System.err.println("Your vote was modified and altered");
-					voteCounted = false;
-					return voteCounted;
-				}
-				
+				voteCounted = true;//We are sure that user vote was counted but now checking if it was altered or not
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
+		}
+		if(voteCounted == false) {
+			System.err.println("Your vote wasn't counted");
+			System.exit(0);
 		}
 		try {
 			ResultSet prevUserVoted = statement.executeQuery("SELECT * FROM `online_voting`.`voting_table` WHERE `ID` = '"+PreRowId+"'");
@@ -181,8 +174,9 @@ public class PublicCloud {
 					System.out.println("Your vote was counted successfully");
 					voteCounted = true;
 				}else {
-					System.out.println("Seems like your vote was altered");
+					System.err.println("Seems like your vote was altered");
 					voteCounted = false;
+					System.exit(0);
 				}
 			}else {
 				//There are previous vote that are casted
@@ -190,14 +184,14 @@ public class PublicCloud {
 					System.out.println("Your vote was counted Successfully");
 					voteCounted = true;
 				}else {
-					System.out.println("Seems like your vote was altered");
+					System.err.println("Seems like your vote was altered");
 					voteCounted = false;
+					System.exit(0);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return voteCounted;
 	}
 }

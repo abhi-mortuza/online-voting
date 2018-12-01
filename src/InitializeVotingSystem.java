@@ -148,16 +148,26 @@ public class InitializeVotingSystem {
         try {
         	connect.prepareStatement("UPDATE `online_voting`.`parameter` SET parameter_value='"+e+"' WHERE `parameter_name`='kpub'").executeUpdate();
         	connect.prepareStatement("UPDATE `online_voting`.`parameter` SET parameter_value='"+n+"' WHERE `parameter_name`='prime_n'").executeUpdate();
-        	connect.prepareStatement("UPDATE `online_voting`.`parameter` SET parameter_value='"+q+"' WHERE `parameter_name`='prime_q'").executeUpdate();
-        	connect.prepareStatement("UPDATE `online_voting`.`parameter` SET parameter_value='"+p+"' WHERE `parameter_name`='prime_p'").executeUpdate();
-        	connect.prepareStatement("UPDATE `online_voting`.`parameter` SET parameter_value='"+phi+"' WHERE `parameter_name`='phi'").executeUpdate();
 			//Storing the private key in the files
 			try {
 				FileWriter fstream = new FileWriter("private.key");
+				FileWriter pFile = new FileWriter("p.key");
+				FileWriter qFile = new FileWriter("q.key");
+				FileWriter phiFile = new FileWriter("phi.key");
 		        BufferedWriter out = new BufferedWriter(fstream);
+		        BufferedWriter pOut = new BufferedWriter(pFile);
+		        BufferedWriter qOut = new BufferedWriter(qFile);
+		        BufferedWriter phiOut = new BufferedWriter(phiFile);
+		        
 		        out.write(d.toString());
+		        pOut.write(p.toString());
+		        qOut.write(q.toString());
+		        phiOut.write(phi.toString());
 		        //Close the output stream
 		    	out.close();
+		    	pOut.close();
+		    	qOut.close();
+		    	phiOut.close();
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

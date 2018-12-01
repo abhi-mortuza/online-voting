@@ -1,4 +1,6 @@
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class encryptionDecryptionAlgo {
 	public BigInteger SAM(BigInteger number,BigInteger exponent,BigInteger modulus) {
@@ -13,6 +15,24 @@ public class encryptionDecryptionAlgo {
 			}
 		}
 		return result;
+	}
+	
+	public String GenerateSHA(String password) {
+		String hashValue = "";
+	    try {
+	        MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+	        String salt = "asdowesadddf";
+	        String passWithSalt = password + salt;
+	        byte[] passBytes = passWithSalt.getBytes();
+	        byte[] passHash = sha256.digest(passBytes);             
+	        StringBuilder sb = new StringBuilder();
+	        for(int i=0; i< passHash.length ;i++) {
+	            sb.append(Integer.toString((passHash[i] & 0xff) + 0x100, 16).substring(1));         
+	        }
+	        hashValue = sb.toString();
+	    } catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
+	    
+	    return hashValue;
 	}
 	
 	public String RSAEncrypt(String candidateId,BigInteger kpub,BigInteger n) {

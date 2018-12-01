@@ -1,11 +1,14 @@
+import java.io.*;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 @SuppressWarnings("unused")
 public class PrivateCloud {
@@ -42,22 +45,81 @@ public class PrivateCloud {
 		return candidatesId;
 	}
 	
+	private String getCandidateInformationFromID(String candidateId) {
+		String returnData = "";
+		try {
+			resultSet = statement.executeQuery("SELECT * FROM online_voting.candidates WHERE `candidate_id`="+Integer.parseInt(candidateId));
+			while(resultSet.next()) {
+				returnData += "[ "+ candidateId +" ] "+resultSet.getString("c_first_name")+" "+ resultSet.getString("c_last_name");
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return returnData;
+	}
+	
+	private void voteAlteredOrNot() {
+		BigInteger indiviudalVote;
+		BigInteger toalVote;
+		BigInteger preTotalVote = BigInteger.ONE;
+		try {
+			resultSet = statement.executeQuery("SELECT * FROM `online_voting`.`voting_table` ORDER BY `ID` ASC");
+			while(resultSet.next()) {
+				if(!preTotalVote.multiply(new BigInteger(resultSet.getString("encrypted_vote"))).toString().equals(resultSet.getString("total_encrypted_vote"))) {
+					System.err.println("Vote was altered");
+					System.exit(0);
+				}
+			}
+		}catch(Exception e) {
+			
+		}
+	}
+	
 	private void DisplayResults() {
-		System.out.println("Displaying the final result");
+		voteAlteredOrNot();
+		System.out.println("==================================================");
+		System.out.println("============ Displaying final Vote ===============");
+		System.out.println("==================================================");
 		BigInteger primeN = this.getVotingParameter("prime_n");
 		BigInteger primeQ = this.getVotingParameter("prime_q");
 		BigInteger primeP = this.getVotingParameter("prime_p");
 		BigInteger phi = this.getVotingParameter("phi");
 		BigInteger kpub = this.getVotingParameter("kpub");
-		String encryptedVote = this.getVotingParameter("vote_condition").toString();
+		BigInteger privateKey = null;
+		String encryptedVote = null;
+		
 		ArrayList<BigInteger> candidateIds = getCandidateIds();
 		HashMap<BigInteger,Integer> decIndiVoteResult = new HashMap<>();
 		
+		//Getting the private key
+		File pkeyFile = new File("private.key");
+		
+		
+		try {
+			Scanner sc = new Scanner(pkeyFile);
+			privateKey = new BigInteger(sc.nextLine());
+			sc.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			resultSet = statement.executeQuery("SELECT `total_encrypted_vote` FROM `online_voting`.`voting_table` ORDER BY `ID` DESC LIMIT 1");
+			//Formating the id
+			if(resultSet.next()) {
+				encryptedVote = resultSet.getString(1);
+			}else {
+				encryptedVote = "1";
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 		
 		//Decrypting the encrypted vote first
 		encryptionDecryptionAlgo enDeAlgo = new encryptionDecryptionAlgo();
-		BigInteger decryptedVote = enDeAlgo.RSAdecrypt(encryptedVote , new BigInteger("27"), primeN);
-		
+		BigInteger decryptedVote = enDeAlgo.RSAdecrypt(encryptedVote , privateKey, primeN);
 		//while(decryptedVote != BigInteger.ONE) {
 			for(BigInteger candiateId: candidateIds) {
 				boolean continueCalculating = true;
@@ -78,9 +140,8 @@ public class PrivateCloud {
 		
 		//Displaying the result
 		for(BigInteger candiateId: decIndiVoteResult.keySet()) {
-			System.out.println(candiateId +" => " +decIndiVoteResult.get(candiateId));
+			System.out.println(this.getCandidateInformationFromID(candiateId.toString()) +" => " +decIndiVoteResult.get(candiateId));
 		}
-		
 	}
 	
 	private BigInteger getVotingParameter(String parameterName) {

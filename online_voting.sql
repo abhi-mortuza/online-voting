@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 01, 2018 at 10:43 PM
+-- Generation Time: Dec 03, 2018 at 09:09 PM
 -- Server version: 10.1.35-MariaDB
 -- PHP Version: 7.2.9
 
@@ -21,6 +21,78 @@ SET time_zone = "+00:00";
 --
 -- Database: `online_voting`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `candidates`
+--
+
+CREATE TABLE `candidates` (
+  `candidate_id` int(11) NOT NULL,
+  `c_first_name` varchar(255) NOT NULL,
+  `c_last_name` varchar(255) NOT NULL,
+  `c_email` varchar(100) NOT NULL,
+  `ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `candidates`
+--
+
+INSERT INTO `candidates` (`candidate_id`, `c_first_name`, `c_last_name`, `c_email`, `ID`) VALUES
+(11, 'c1', 'c1', 'c1', 12),
+(13, 'c2', 'c2', 'c2', 13),
+(17, 'c3', 'c3', 'c3', 14);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `parameter`
+--
+
+CREATE TABLE `parameter` (
+  `parameter_name` varchar(255) NOT NULL,
+  `parameter_value` varchar(5000) DEFAULT NULL,
+  `parameter_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `parameter`
+--
+
+INSERT INTO `parameter` (`parameter_name`, `parameter_value`, `parameter_id`) VALUES
+('kpub', '167483099473170830251935761716423098847562514838999294885585568166212411311776547454198324273895327011131407416187405480038050820606270562530529081411385554454101573595561409593393603247659727134027151582614959293187711299237942866484132907812962334693502041308027280592490119900438616280576883082439470343297', 6),
+('prime_n', '804587055359347425783300779070287490236960574331027601466549140054191892394832997512620007707768556052670728565044792694259751183102713503605280955358380900341061135493236677493603982898639858192167711558187518496755495759292376889935026216317596055536894070021791213356931478520395110036040590074890459853852701920952826546550718327124539294256414270699958921561890989463099349664995994308841292179029279994898248586481250425086866380566115476244716375432969199112837460344102173724389067690324838923403090079905836319754039470186385743723961198561615001376838541680138655987465499558982426407821426519442301056211946724575427929814702847122192562909287410344220571264260244491444408013409647046339910106233995146948283505836930065341145951877248708216929018000281269686413243344364043922335015269689080647676875557887096518356364859429564021866323100983065424897627737729643124758966320841721111284998384956513366917124075726379615566603184883469166185494566898942596557875205561349252318665360404815100478889783985388883329562564759586150601455901064489135037158577625665227400391386280579553343306203411226907563251778002528310411757366323635515786481576831850842221913531642838879179715395904138458191904384015926652625844580639', 7);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `ID` int(11) NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `user_name` varchar(100) NOT NULL,
+  `user_voted` tinyint(1) DEFAULT NULL,
+  `user_voting_time` int(11) DEFAULT NULL,
+  `is_admin` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`ID`, `first_name`, `last_name`, `password`, `user_name`, `user_voted`, `user_voting_time`, `is_admin`) VALUES
+(26, 'admin', 'admin', '79f7890f792e2eb4cd34a428d9e7f522fd9b22d21186b4a185f5fb8d24c9ff52', 'admin', NULL, NULL, 1),
+(27, 'v1', 'v1', 'be17b40821cb5b9bb25a7f6435eb4383f6be2e6d42f7adb60c6e6a002a86c7f3', 'v1', NULL, NULL, 0),
+(28, 'v2', 'v2', '385395d555c65bc4f4cd34bf9c8afe9abb3b0d861218a1f638fe6b393ce55fcf', 'v2', NULL, NULL, 0),
+(29, 'v3', 'v3', '8f47efe4f1325193d8a92c39e7aded35f9098e6654543a23ec9563b2b933c4cd', 'v3', NULL, NULL, 0),
+(30, 'v3', 'v4', '9c8d8b282528c88913adf0739eb318c1143fd55b3884f746c9fbe4a602500360', 'v4', NULL, NULL, 0),
+(31, 'v5', 'v5', '1bf95c635d57407ba33f467841e2cbe964a306e0d6b20fbf9c2857ce849b08b1', 'v5', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -49,6 +121,24 @@ INSERT INTO `voting_table` (`ID`, `hashed_user`, `total_encrypted_vote`) VALUES
 --
 
 --
+-- Indexes for table `candidates`
+--
+ALTER TABLE `candidates`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `parameter`
+--
+ALTER TABLE `parameter`
+  ADD PRIMARY KEY (`parameter_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `voting_table`
 --
 ALTER TABLE `voting_table`
@@ -57,6 +147,24 @@ ALTER TABLE `voting_table`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `candidates`
+--
+ALTER TABLE `candidates`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `parameter`
+--
+ALTER TABLE `parameter`
+  MODIFY `parameter_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `voting_table`
